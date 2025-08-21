@@ -158,10 +158,22 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CATEGORIES */}
-      {categories.length > 1 && (
-        <section className="container mx-auto px-4 py-12 my-4 flex-1">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800">Shop by Category</h2>
+      {/* Shop by Category */}
+      <section className="container mx-auto px-4 py-12 my-4 flex-1">
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">Shop by Category</h2>
+
+        {status === 'loading' ? (
+          // Loading skeletons
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="animate-pulse bg-gray-200 rounded-lg h-32"
+              />
+            ))}
+          </div>
+        ) : categories.length > 1 ? (
+          // Real categories
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
             {categories
               .filter((cat) => cat !== 'All')
@@ -169,8 +181,9 @@ export default function Home() {
                 <Link
                   to={`/category/${cat}`}
                   key={cat}
-                  className="shadow-[0_15px_30px_rgba(2,6,23,0.35),0_6px_10px_rgba(2,6,23,0.2)]
-            ring-3 ring-blue-600/95 hover:shadow-[0_25px_40px_rgba(2,6,23,0.45)] transition bg-gradient-to-r from-blue-600/95 to-indigo-300/95 rounded-lg p-6 flex flex-col items-center group"
+                  className="ring-3 ring-blue-600/95 bg-gradient-to-r from-blue-600/95 to-indigo-300/95 rounded-lg p-6 flex flex-col items-center group
+                            shadow-[0_15px_30px_rgba(2,6,23,0.35),0_6px_10px_rgba(2,6,23,0.2)]
+                            hover:shadow-[0_25px_40px_rgba(2,6,23,0.45)] transition"
                 >
                   <div className="w-12 h-12 mb-3 rounded-full bg-purple-50 flex items-center justify-center group-hover:bg-purple-100">
                     <span className="text-lg font-bold text-purple-600">
@@ -181,8 +194,12 @@ export default function Home() {
                 </Link>
               ))}
           </div>
-        </section>
-      )}
+        ) : (
+          // No categories available
+          <p className="text-gray-500">No categories available.</p>
+        )}
+      </section>
+
 
       {/* POPULAR PRODUCTS */}
       <section className="bg-white py-12 my-4">
