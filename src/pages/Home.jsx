@@ -129,7 +129,7 @@ export default function Home() {
       </section>
 
       {/* FEATURE OVERVIEW SECTION */}
-      <section className="w-[90%] rounded-xl justify-center mx-auto mt-12
+      <section className="w-[90%] rounded-xl justify-center mx-auto mt-12 mb-4
             shadow-[0_15px_30px_rgba(2,6,23,0.35),0_6px_10px_rgba(2,6,23,0.2)]
             ring-3 border-3 ring-blue-600/95 hover:shadow-[0_25px_40px_rgba(2,6,23,0.45)] transition bg-gradient-to-r from-blue-600/95 via-green-200/85 to-indigo-300/95 py-16 px-0.5">
         <div className="container mx-auto px-4 flex flex-col lg:flex-row items-center gap-12">
@@ -160,7 +160,7 @@ export default function Home() {
 
       {/* CATEGORIES */}
       {categories.length > 1 && (
-        <section className="container mx-auto px-4 py-12 flex-1">
+        <section className="container mx-auto px-4 py-12 my-4 flex-1">
           <h2 className="text-2xl font-bold mb-6 text-gray-800">Shop by Category</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
             {categories
@@ -185,7 +185,7 @@ export default function Home() {
       )}
 
       {/* POPULAR PRODUCTS */}
-      <section className="bg-white py-12">
+      <section className="bg-white py-12 my-4">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-800">Popular Products</h2>
@@ -223,7 +223,7 @@ export default function Home() {
       </section>
 
       {/* TESTIMONIAL SECTION */}
-      <section className="w-full bg-white py-12">
+      <section className="w-full bg-white py-12 my-4">
         <div className="container mx-auto px-4 flex flex-col items-center gap-6">
           <h3 className="text-xl lg:text-2xl font-semibold text-gray-800 text-center mb-2">What Our Customers Say</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -248,7 +248,7 @@ export default function Home() {
 
       {/* SALE CTA */}
       <section className="w-[90%] rounded-xl justify-center mx-auto bg-gradient-to-r shadow-[0_15px_30px_rgba(2,6,23,0.35),0_6px_10px_rgba(2,6,23,0.2)]
-            ring-3 ring-blue-600/95 border-3 hover:shadow-[0_25px_40px_rgba(2,6,23,0.45)] transition from-blue-600 via-green-200/85 to-indigo-300 text-gray-900 py-12">
+            ring-3 ring-blue-600/95 border-3 hover:shadow-[0_25px_40px_rgba(2,6,23,0.45)] transition from-blue-600 via-green-200/85 to-indigo-300 text-gray-900 py-12 mt-4 mb-12">
         <div className="container mx-auto px-4 flex flex-col lg:flex-row items-center justify-between gap-6">
           <div>
             <h3 className="text-2xl font-bold mb-2">Big Summer Sale</h3>

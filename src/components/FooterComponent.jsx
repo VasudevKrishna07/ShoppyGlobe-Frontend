@@ -44,7 +44,7 @@ const SVGComponentUrl = 'data:image/svg+xml;utf8,' + encodeURIComponent(SVGCompo
 export default function FooterComponent() {
   return (
     <>
-    <footer className="bg-gradient-to-tr lg:h-[45dvh] md:h-[37dvh] from-gray-700 to-gray-950 ring-3 ring-gray-700 border-b-3 border-t-3 text-white py-12 mt-8">
+    <footer className="bg-gradient-to-tr lg:h-[45dvh] md:h-[37dvh] from-gray-700 to-gray-950 ring-3 ring-gray-700 border-b-3 border-t-3 text-white py-12">
       <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between gap-8">
         <div>
           <h4 className="text-lg font-bold mb-2">ShoppyGlobe</h4>
