@@ -1,6 +1,6 @@
 // src/components/ProductList.jsx
 
-import { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchProducts,

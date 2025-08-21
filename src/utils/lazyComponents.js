@@ -1,11 +1,19 @@
 // src/utils/lazyComponents.js
+
 import { lazy } from 'react';
 
+
+// Main pages
 export const LazyHome = lazy(() => import('../pages/Home'));
-export const LazyShop = lazy(() => import('../pages/Shop'));
-export const LazyCart = lazy(() => import('../pages/CartPage'));
-export const LazyProductDetails = lazy(() => import('../pages/ProductDetails'));
 export const LazyAbout = lazy(() => import('../pages/About'));
-export const LazyNotFound = lazy(() => import('../pages/NotFound'));
+
+// Shopping related pages  
+export const LazyShop = lazy(() => import('../components/ProductList'));
+export const LazyCart = lazy(() => import('../pages/CartPage'));
 export const LazyCheckout = lazy(() => import('../pages/Checkout'));
-export const LazyProductPage = lazy(() => import('../pages/ProductPage'));
+
+// Product pages
+export const LazyProductDetails = lazy(() => import('../pages/ProductPage'));
+
+// Error pages
+export const LazyNotFound = lazy(() => import('../components/NotFound'));
