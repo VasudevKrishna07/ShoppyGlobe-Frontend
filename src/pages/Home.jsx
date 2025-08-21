@@ -196,7 +196,7 @@ export default function Home() {
           </div>
         ) : (
           // No categories available
-          <p className="text-gray-500">No categories available.</p>
+          <p className="text-gray-800 font-semibold">No categories available.</p>
         )}
       </section>
 
