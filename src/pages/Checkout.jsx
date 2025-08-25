@@ -70,85 +70,135 @@ export default function Checkout() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name */}
             <div>
-              <label className="block text-sm font-medium mb-1">Full Name</label>
+              <label htmlFor="checkout-name" className="block text-sm font-medium mb-1">
+                Full Name
+              </label>
               <input
+                id="checkout-name"
+                type="text"
                 name="name"
                 value={form.name}
                 onChange={handleChange}
-                className={`w-full border px-3 py-2 rounded ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
+                autoComplete="name"
+                placeholder="Enter your full name"
+                className={`w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                  errors.name ? 'border-red-500' : 'border-gray-300'
+                }`}
               />
-              {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
+              {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium mb-1">Email</label>
+              <label htmlFor="checkout-email" className="block text-sm font-medium mb-1">
+                Email Address
+              </label>
               <input
+                id="checkout-email"
                 type="email"
                 name="email"
                 value={form.email}
                 onChange={handleChange}
-                className={`w-full border px-3 py-2 rounded ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+                autoComplete="email"
+                placeholder="Enter your email address"
+                className={`w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                  errors.email ? 'border-red-500' : 'border-gray-300'
+                }`}
               />
-              {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
+              {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
             </div>
 
             {/* Address */}
             <div>
-              <label className="block text-sm font-medium mb-1">Address</label>
+              <label htmlFor="checkout-address" className="block text-sm font-medium mb-1">
+                Street Address
+              </label>
               <textarea
+                id="checkout-address"
                 name="address"
                 value={form.address}
                 onChange={handleChange}
-                className={`w-full border px-3 py-2 rounded ${errors.address ? 'border-red-500' : 'border-gray-300'}`}
+                autoComplete="street-address"
+                placeholder="Enter your street address"
+                rows="3"
+                className={`w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                  errors.address ? 'border-red-500' : 'border-gray-300'
+                }`}
               />
-              {errors.address && <p className="text-xs text-red-500">{errors.address}</p>}
+              {errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
             </div>
 
             {/* City, ZIP */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">City</label>
+                <label htmlFor="checkout-city" className="block text-sm font-medium mb-1">
+                  City
+                </label>
                 <input
+                  id="checkout-city"
+                  type="text"
                   name="city"
                   value={form.city}
                   onChange={handleChange}
-                  className={`w-full border px-3 py-2 rounded ${errors.city ? 'border-red-500' : 'border-gray-300'}`}
+                  autoComplete="address-level2"
+                  placeholder="Enter city"
+                  className={`w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                    errors.city ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
-                {errors.city && <p className="text-xs text-red-500">{errors.city}</p>}
+                {errors.city && <p className="text-xs text-red-500 mt-1">{errors.city}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">ZIP / Postal Code</label>
+                <label htmlFor="checkout-zip" className="block text-sm font-medium mb-1">
+                  ZIP / Postal Code
+                </label>
                 <input
+                  id="checkout-zip"
+                  type="text"
                   name="zip"
                   value={form.zip}
                   onChange={handleChange}
-                  className={`w-full border px-3 py-2 rounded ${errors.zip ? 'border-red-500' : 'border-gray-300'}`}
+                  autoComplete="postal-code"
+                  placeholder="Enter ZIP code"
+                  className={`w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                    errors.zip ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
-                {errors.zip && <p className="text-xs text-red-500">{errors.zip}</p>}
+                {errors.zip && <p className="text-xs text-red-500 mt-1">{errors.zip}</p>}
               </div>
             </div>
 
             {/* Country */}
             <div>
-              <label className="block text-sm font-medium mb-1">Country</label>
+              <label htmlFor="checkout-country" className="block text-sm font-medium mb-1">
+                Country
+              </label>
               <input
+                id="checkout-country"
+                type="text"
                 name="country"
                 value={form.country}
                 onChange={handleChange}
-                className={`w-full border px-3 py-2 rounded ${errors.country ? 'border-red-500' : 'border-gray-300'}`}
+                autoComplete="country-name"
+                placeholder="Enter country"
+                className={`w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                  errors.country ? 'border-red-500' : 'border-gray-300'
+                }`}
               />
-              {errors.country && <p className="text-xs text-red-500">{errors.country}</p>}
+              {errors.country && <p className="text-xs text-red-500 mt-1">{errors.country}</p>}
             </div>
 
             {/* Payment */}
             <div>
-              <label className="block text-sm font-medium mb-1">Payment Method</label>
+              <label htmlFor="checkout-payment" className="block text-sm font-medium mb-1">
+                Payment Method
+              </label>
               <select
+                id="checkout-payment"
                 name="payment"
                 value={form.payment}
                 onChange={handleChange}
-                className="w-full border px-3 py-2 rounded"
+                className="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
                 <option value="card">Credit/Debit Card</option>
                 <option value="paypal">PayPal</option>
@@ -159,7 +209,7 @@ export default function Checkout() {
             {/* Submit */}
             <button
               type="submit"
-              className="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition-colors"
+              className="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors"
             >
               Place Order
             </button>
@@ -171,14 +221,58 @@ export default function Checkout() {
           <h2 className="text-xl font-bold mb-4">Order Summary</h2>
           <div className="space-y-3">
             {cart.map((item) => (
-              <div key={item.id} className="flex justify-between text-sm">
-                <span>{item.title} × {item.quantity}</span>
-                <span>${(item.price * item.quantity).toFixed(2)}</span>
+              <div key={item._id || item.id || item.productId} className="flex justify-between text-sm">
+                <span className="truncate pr-2">
+                  {item.title} × {item.quantity}
+                </span>
+                <span className="font-medium">
+                  ${(item.price * item.quantity).toFixed(2)}
+                </span>
               </div>
             ))}
-            <div className="border-t pt-3 flex justify-between font-semibold">
-              <span>Total</span>
-              <span>${total.toFixed(2)}</span>
+            <div className="border-t pt-3 mt-4">
+              <div className="flex justify-between text-sm text-gray-600 mb-1">
+                <span>Subtotal</span>
+                <span>${total.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm text-gray-600 mb-1">
+                <span>Shipping</span>
+                <span>Free</span>
+              </div>
+              <div className="flex justify-between text-sm text-gray-600 mb-3">
+                <span>Tax</span>
+                <span>${(total * 0.08).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between font-semibold text-lg">
+                <span>Total</span>
+                <span>${(total * 1.08).toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Order Items Summary */}
+          <div className="mt-6 pt-6 border-t">
+            <h3 className="text-sm font-medium text-gray-900 mb-3">
+              Items in your order ({cart.length})
+            </h3>
+            <div className="space-y-2">
+              {cart.map((item) => (
+                <div key={item._id || item.id || item.productId} className="flex items-center text-xs text-gray-600">
+                  <div className="w-10 h-10 bg-gray-200 rounded mr-2 flex-shrink-0">
+                    {item.image && (
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-full h-full object-cover rounded"
+                      />
+                    )}
+                  </div>
+                  <div className="flex-1 truncate">
+                    <p className="truncate">{item.title}</p>
+                    <p>Qty: {item.quantity}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </aside>
