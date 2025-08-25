@@ -1,136 +1,148 @@
-// src/components/ProductList.jsx
-
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchProducts,
-  selectFilteredProducts,
-  selectCategories,
+  selectPagination,
   selectStatus,
   selectError,
   selectSearchTerm,
   selectSelectedCategory,
+  selectSortBy,
+  selectSortOrder,
   setSearchTerm,
   setSelectedCategory,
+  setSortBy,
+  setSortOrder
 } from '../redux/productsSlice';
+
 import ProductItem from './ProductItem';
-import { FiSearch, FiRefreshCw } from 'react-icons/fi';
+import Pagination from './components/Pagination';
+import LoadingSpinner from './components/LoadingSpinner';
+import ErrorBoundary from './components/ErrorBoundary';
 
 export default function ProductList() {
   const dispatch = useDispatch();
 
-  // Individual memoized selectors
   const status           = useSelector(selectStatus);
   const error            = useSelector(selectError);
   const searchTerm       = useSelector(selectSearchTerm);
   const selectedCategory = useSelector(selectSelectedCategory);
+  const sortBy           = useSelector(selectSortBy);
+  const sortOrder        = useSelector(selectSortOrder);
+  const pagination       = useSelector(selectPagination);
 
-  const products   = useSelector(selectFilteredProducts);
-  const categories = useSelector(selectCategories);
+  const products = useSelector(state => state.products.items);
 
-  const [sortOption, setSortOption] = useState('title');
+  const [page, setPage]        = useState(1);
+  const [limit]                = useState(20);
 
-  // Fetch products once on mount
   useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchProducts());
-    }
-  }, [dispatch, status]);
+    dispatch(fetchProducts({ page, limit, search: searchTerm, category: selectedCategory, sort: sortBy, sortOrder }));
+  }, [dispatch, page, limit, searchTerm, selectedCategory, sortBy, sortOrder]);
 
-  // Sort locally
-  const sortedProducts = useMemo(() => {
-    const copy = [...products];
-    if (sortOption === 'price')  return copy.sort((a, b) => a.price - b.price);
-    if (sortOption === 'rating') return copy.sort((a, b) => b.rating - a.rating);
-    if (sortOption === 'title')  return copy.sort((a, b) => a.title.localeCompare(b.title));
-    return copy;
-  }, [products, sortOption]);
+  // Local filters
+  const handleSearchChange = (e) => {
+    setPage(1);
+    dispatch(setSearchTerm(e.target.value));
+  };
+
+  const handleCategoryChange = (e) => {
+    setPage(1);
+    dispatch(setSelectedCategory(e.target.value));
+  };
+
+  const handleSortChange = (e) => {
+    const [newSort, newOrder] = e.target.value.split(':');
+    dispatch(setSortBy(newSort));
+    dispatch(setSortOrder(newOrder));
+  };
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if (status === 'loading') {
+    return <LoadingSpinner />;
+  }
+
+  if (status === 'failed') {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-500 mb-4">{error}</p>
+        <button
+          onClick={() => dispatch(fetchProducts({ page, limit, search: searchTerm, category: selectedCategory, sort: sortBy, sortOrder }))}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <section className="container mx-auto px-4 py-8">
-
-      {/* Toolbar */}
-      <div className="flex flex-col lg:flex-row gap-4 justify-between items-center mb-8">
-
-        {/* Search */}
-        <div className="relative md:w-[90%] mx-auto w-full lg:w-1/3">
-          <FiSearch className="absolute left-3 top-2.5 text-gray-400" />
+    <ErrorBoundary>
+      <section className="container mx-auto px-4 py-8">
+        {/* Toolbar */}
+        <div className="flex flex-col lg:flex-row gap-4 justify-between items-center mb-8">
+          {/* Search */}
           <input
             type="text"
             id="product-search"
             name="productSearch"
+            placeholder="Search products..."
             autoComplete="off"
-            placeholder="Search..."
             value={searchTerm}
-            onChange={(e) => dispatch(setSearchTerm(e.target.value))}
-            className="h-10 border rounded-md pl-10 pr-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 w-full"
+            onChange={handleSearchChange}
+            className="border rounded-md px-4 py-2 w-full lg:w-1/3 focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
-        </div>
 
-        <div className="relative w-full md:w-[90%] mx-auto lg:w-1/3 flex justify-between items-center">
-        {/* Category */}
-        <select
-          id="product-category"
-          name="category"
-          value={selectedCategory}
-          onChange={(e) => dispatch(setSelectedCategory(e.target.value))}
-          className="border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
-        >
-          {categories.map((cat) => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
-        </select>
-
-        {/* Sort */}
-        <select
-          id="product-sort"
-          name="sortOption"
-          value={sortOption}
-          onChange={(e) => setSortOption(e.target.value)}
-          className="border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
-        >
-          <option value="title">Sort by: Title</option>
-          <option value="price">Sort by: Price</option>
-          <option value="rating">Sort by: Rating</option>
-        </select>
-        </div>
-      </div>
-
-      {/* Loading */}
-      {status === 'loading' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {Array.from({ length: 8 }).map((_, idx) => (
-            <div key={idx} className="bg-gray-100 h-64 rounded-lg animate-pulse" />
-          ))}
-        </div>
-      )}
-
-      {/* Error */}
-      {status === 'failed' && (
-        <div className="text-center py-12">
-          <p className="text-red-500 mb-4">{error}</p>
-          <button
-            onClick={() => dispatch(fetchProducts())}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+          {/* Category */}
+          <select
+            id="product-category"
+            name="productCategory"
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+            className="border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
-            <FiRefreshCw /> Retry
-          </button>
-        </div>
-      )}
+            {/* Replace with your categories list */}
+            <option value="">All Categories</option>
+            {/* ... */}
+          </select>
 
-      {/* Product Grid */}
-      {status === 'succeeded' && sortedProducts.length > 0 && (
+          {/* Sort */}
+          <select
+            id="product-sort"
+            name="productSort"
+            value={`${sortBy}:${sortOrder}`}
+            onChange={handleSortChange}
+            className="border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          >
+            <option value="createdAt:desc">Newest First</option>
+            <option value="price:asc">Price: Low to High</option>
+            <option value="price:desc">Price: High to Low</option>
+            <option value="rating:desc">Top Rated</option>
+            <option value="title:asc">Name A–Z</option>
+            <option value="title:desc">Name Z–A</option>
+          </select>
+        </div>
+
+        {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {sortedProducts.map((product) => (
-            <ProductItem key={product.id} product={product} />
+          {products.map(product => (
+            <ProductItem key={product.id || product._id} product={product} />
           ))}
         </div>
-      )}
 
-      {/* No Results */}
-      {status === 'succeeded' && sortedProducts.length === 0 && (
-        <p className="text-center py-8 text-gray-500">No products found.</p>
-      )}
-    </section>
+        {/* Pagination */}
+        {pagination && pagination.totalPages > 1 && (
+          <Pagination
+            currentPage={pagination.page}
+            totalPages={pagination.totalPages}
+            onPageChange={handlePageChange}
+          />
+        )}
+      </section>
+    </ErrorBoundary>
   );
 }

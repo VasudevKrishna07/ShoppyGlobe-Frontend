@@ -1,41 +1,51 @@
 // src/redux/productsSlice.js
-
 import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 import { API_BASE_URL, API_ENDPOINTS } from '../config/api';
 
-// --- Async fetch for products
+// --- Async fetch for products with filters and pagination
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
-  async (_, { rejectWithValue, getState }) => {
+  async ({ page = 1, limit = 20, search, category, sort, sortOrder } = {}, { rejectWithValue, getState }) => {
     try {
       const token = getState().auth?.token;
-      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.PRODUCTS}`, {
+      const params = new URLSearchParams();
+      params.append('page', page);
+      params.append('limit', limit);
+      if (search) params.append('search', search);
+      if (category) params.append('category', category);
+      if (sort) params.append('sort', sort);
+      if (sortOrder) params.append('sortOrder', sortOrder);
+
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.PRODUCTS}?${params}`, {
         headers: {
           'Content-Type': 'application/json',
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
+          ...(token && { Authorization: `Bearer ${token}` })
+        }
       });
 
       if (!response.ok) {
         throw new Error('Failed to fetch products');
       }
 
-      const data = await response.json();
-      return data.products || data; // Support both array and { products: [...] }
+      const result = await response.json();
+      // Expect: { success: true, data: { products, pagination } }
+      const { products, pagination } = result.data;
+      return { products, pagination };
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.message || 'Failed to fetch products');
     }
   }
 );
 
 const initialState = {
   items: [],
+  pagination: null,
   status: 'idle',      // idle | loading | succeeded | failed
   error: null,
   searchTerm: '',
-  selectedCategory: 'All',
-  sortBy: 'title',
-  sortOrder: 'asc',
+  selectedCategory: '',
+  sortBy: 'createdAt',
+  sortOrder: 'desc'
 };
 
 const productsSlice = createSlice({
@@ -61,7 +71,7 @@ const productsSlice = createSlice({
         state.sortBy = action.payload;
         state.sortOrder = 'asc';
       }
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -71,13 +81,14 @@ const productsSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.items = action.payload;
+        state.items = action.payload.products;
+        state.pagination = action.payload.pagination;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload || 'Error fetching products';
       });
-  },
+  }
 });
 
 export const {
@@ -85,65 +96,46 @@ export const {
   setSelectedCategory,
   setSortBy,
   setSortOrder,
-  toggleSort,
+  toggleSort
 } = productsSlice.actions;
 
 // --- Base selectors
 export const selectAllProducts = (state) => state.products.items;
-export const selectStatus      = (state) => state.products.status;
-export const selectError       = (state) => state.products.error;
+export const selectPagination = (state) => state.products.pagination;
+export const selectStatus = (state) => state.products.status;
+export const selectError = (state) => state.products.error;
 export const selectSearchTerm = (state) => state.products.searchTerm;
-
-// Select the currently selected category
 export const selectSelectedCategory = (state) => state.products.selectedCategory;
+export const selectSortBy = (state) => state.products.sortBy;
+export const selectSortOrder = (state) => state.products.sortOrder;
 
 // --- Categories selector
 export const selectCategories = createSelector(
   [selectAllProducts],
-  (items) => ['All', ...new Set(items.map((p) => p.category))]
+  (items) => ['All', ...Array.from(new Set(items.map((p) => p.category || 'Uncategorized')))]
 );
 
-// --- Filtered products
+// --- Filtered products without pagination
 export const selectFilteredProducts = createSelector(
-  [
-    selectAllProducts,
-    (state) => state.products.searchTerm,
-    (state) => state.products.selectedCategory,
-  ],
+  [selectAllProducts, selectSearchTerm, selectSelectedCategory],
   (items, searchTerm, selectedCategory) => {
     let filtered = items;
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(
-        (p) =>
-          p.title.toLowerCase().includes(term) ||
-          p.description.toLowerCase().includes(term)
+        (p) => p.title.toLowerCase().includes(term) || p.description.toLowerCase().includes(term)
       );
     }
-    if (selectedCategory !== 'All') {
+    if (selectedCategory && selectedCategory !== 'All') {
       filtered = filtered.filter((p) => p.category === selectedCategory);
     }
     return filtered;
   }
 );
 
-// --- Popular products (top-rated & in-stock)
-export const selectPopularProducts = createSelector(
-  [selectAllProducts],
-  (items) =>
-    items
-      .filter((p) => p.rating >= 4.5 && p.stock > 0)
-      .sort((a, b) => b.rating - a.rating)
-      .slice(0, 8)
-);
-
-// --- Sorted & filtered products
+// --- Sorted products (client-side sorting)
 export const selectSortedProducts = createSelector(
-  [
-    selectFilteredProducts,
-    (state) => state.products.sortBy,
-    (state) => state.products.sortOrder,
-  ],
+  [selectFilteredProducts, selectSortBy, selectSortOrder],
   (filtered, sortBy, sortOrder) => {
     return [...filtered].sort((a, b) => {
       let aVal = a[sortBy];
@@ -158,17 +150,27 @@ export const selectSortedProducts = createSelector(
   }
 );
 
+// --- Popular products (top-rated & in-stock)
+export const selectPopularProducts = createSelector(
+  [selectAllProducts],
+  (items) =>
+    items
+      .filter((p) => p.rating >= 4.5 && p.stock > 0)
+      .sort((a, b) => b.rating - a.rating)
+      .slice(0, 8)
+);
+
 // --- Related products for ProductPage
 export const selectRelatedProducts = createSelector(
   [selectAllProducts, (_, productId) => productId],
   (products, productId) => {
-    const current = products.find((p) => p.id === productId);
+    const current = products.find((p) => p.id === productId || p._id === productId);
     if (!current) return [];
     return products
       .filter(
         (p) =>
-          p.category === current.category &&
-          p.id !== productId &&
+          (p.category === current.category || p.category === current.category) &&
+          (p.id !== productId && p._id !== productId) &&
           p.stock > 0
       )
       .slice(0, 4);

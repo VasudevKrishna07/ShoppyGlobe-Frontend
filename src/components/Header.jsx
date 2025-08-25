@@ -205,7 +205,7 @@ export default function Header() {
                 placeholder="Search…"
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
-                className={`border rounded-r-md pl-10 pr-3 lg:h-10 md:h-8 h-6 w-48 lg:w-155 md:w-60 focus:outline-none focus:ring-2 focus:ring-purple-500 ${isScrolled ? 'dark:bg-gray-950 dark:text-white' : 'dark:bg-white dark:text-gray-950'} `}
+                className={`border rounded-r-md pl-10 pr-3 lg:h-10 md:h-8 h-6 w-48 lg:w-155 md:w-50 focus:outline-none focus:ring-2 focus:ring-purple-500 ${isScrolled ? 'dark:bg-gray-950 dark:text-white' : 'dark:bg-white dark:text-gray-950'} `}
               />
             </div>
           </div>

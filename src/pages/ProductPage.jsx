@@ -1,6 +1,6 @@
-// src/pages/ProductPage.jsx
+import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ProductDetail from '../components/ProductDetail';
 import ProductItem from '../components/ProductItem';
 import {
@@ -8,19 +8,27 @@ import {
   selectRelatedProducts,
   selectStatus,
   selectError,
+  fetchProducts
 } from '../redux/productsSlice';
 import { FiHome, FiChevronRight } from 'react-icons/fi';
 
 export default function ProductPage() {
+  const dispatch = useDispatch();
   const { id } = useParams();
-  const allProducts = useSelector(selectAllProducts);
-  const relatedProducts = useSelector((state) =>
-    selectRelatedProducts(state, parseInt(id, 10))
-  );
-  const status = useSelector(selectStatus);
-  const error = useSelector(selectError);
 
-  const currentProduct = allProducts.find((p) => p.id === parseInt(id, 10));
+  const allProducts      = useSelector(selectAllProducts);
+  const relatedProducts  = useSelector(state => selectRelatedProducts(state, id));
+  const status           = useSelector(selectStatus);
+  const error            = useSelector(selectError);
+
+  const currentProduct = allProducts.find(p => (p._id || p.id) === id);
+
+  // Ensure products are loaded
+  useEffect(() => {
+    if (status === 'idle') {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, status]);
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -57,19 +65,19 @@ export default function ProductPage() {
           <p className="text-center text-red-500 py-20">{error}</p>
         )}
         {status === 'succeeded' && currentProduct && (
-          <ProductDetail />
+          <ProductDetail product={currentProduct} />
         )}
         {status === 'succeeded' && !currentProduct && (
           <p className="text-center text-gray-500 py-20">Product not found.</p>
         )}
 
         {/* Related Products */}
-        {relatedProducts?.length > 0 && (
+        {Array.isArray(relatedProducts) && relatedProducts.length > 0 && (
           <section className="mt-12">
             <h2 className="text-xl font-bold mb-6">You May Also Like</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {relatedProducts.map((product) => (
-                <ProductItem key={product.id} product={product} />
+              {relatedProducts.map(product => (
+                <ProductItem key={product._id || product.id} product={product} />
               ))}
             </div>
           </section>

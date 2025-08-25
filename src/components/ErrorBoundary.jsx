@@ -3,10 +3,7 @@
 import React from 'react';
 import { FiRefreshCw, FiHome, FiAlertTriangle } from 'react-icons/fi';
 
-/**
- * ErrorBoundary Component - Catches JavaScript errors in component tree
- * Displays fallback UI instead of crashing the entire application
- */
+
 export class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -166,4 +163,13 @@ export class ErrorBoundary extends React.Component {
   }
 }
 
+// export const NetworkErrorBoundary = ({ children }) => {
+//   const [isOnline] = React.useState(navigator.onLine);
+//   // … your existing network-check logic …
+//   return isOnline ? children : (
+//     <div className="min-h-screen flex items-center justify-center">
+//       <p className="text-red-500">No internet connection.</p>
+//     </div>
+//   );
+// };
 export default ErrorBoundary;

@@ -225,17 +225,20 @@ export default function Home() {
             </div>
           )}
 
-          {status === 'succeeded' && popularProducts.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {popularProducts.map((product) => (
-                <ProductItem key={product.id} product={product} />
-              ))}
-            </div>
+          {/* Only render when status is succeeded */}
+          {status === 'succeeded' && (
+            // Check popularProducts is an array
+            Array.isArray(popularProducts) && popularProducts.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {popularProducts.map((product) => (
+                  <ProductItem key={product.id || product._id} product={product} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500">No popular products available.</p>
+            )
           )}
 
-          {status === 'succeeded' && popularProducts.length === 0 && (
-            <p className="text-gray-500">No popular products available.</p>
-          )}
         </div>
       </section>
 
